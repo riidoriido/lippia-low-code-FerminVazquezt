@@ -1,0 +1,11 @@
+{
+  "memberships": [
+    {
+      "hourlyRate": {
+        "amount": 0,
+        "since": "string"
+      },
+      "userId": "string"
+    }
+  ]
+}
