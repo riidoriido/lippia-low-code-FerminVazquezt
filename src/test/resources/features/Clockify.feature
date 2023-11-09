@@ -1,7 +1,7 @@
 @Clockify
-Feature: Test Clockify API
+Feature: Clockify API testing with Lippia Low-Code (tp #7)
 
-  Background: Testeamos los diferentes endpoints de la API
+  Background: Testing required endpoints
     Given base url env.base_url_clockify
     And header Content-type = application/json
     And header Accept = */*
