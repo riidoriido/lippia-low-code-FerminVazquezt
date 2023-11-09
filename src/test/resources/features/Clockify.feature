@@ -52,7 +52,7 @@ Feature: Test Clockify API
   Scenario: Update project value: memberships
     Given call Clockify.feature@GetProject
     And base url env.base_url_clockify
-    And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}
+    And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}/memberships
     And body EditMemberships.json
     When execute method PATCH
     Then the status code should be 200

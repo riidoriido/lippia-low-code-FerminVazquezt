@@ -2,10 +2,9 @@
   "memberships": [
     {
       "hourlyRate": {
-        "amount": 0,
-        "since": "string"
+        "amount": 5
       },
-      "userId": "string"
+      "userId": "65383a07205d0441c5269f46"
     }
   ]
 }
