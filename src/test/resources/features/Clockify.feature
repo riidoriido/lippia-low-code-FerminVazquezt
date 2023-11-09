@@ -1,5 +1,5 @@
 @Clockify
-Feature: Clockify API testing with Lippia Low-Code (tp #7)
+Feature: Clockify API testing with Lippia Low-Code (TP7)
 
   Background: Testing required endpoints
     Given base url env.base_url_clockify
@@ -30,14 +30,22 @@ Feature: Clockify API testing with Lippia Low-Code (tp #7)
     When execute method POST
     Then the status code should be 201
 
-  @GetProject
-  Scenario: Get specific project inside workspace
+  @GetProjects
+  Scenario: Get projects inside workspace
     Given call Clockify.feature@ListWorkspaces
     And base url env.base_url_clockify
     And endpoint api/v1/workspaces/{{workspaceId}}/projects
     When execute method GET
     Then the status code should be 200
     * define projectId = $.[0].id
+
+  @FindProjectByID
+  Scenario: Get specific project by its ID
+    Given call Clockify.feature@GetProjects
+    And base url env.base_url_clockify
+    And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}
+    When execute method GET
+    Then the status code should be 200
 
   @UpdateProject
   Scenario: Update project details
