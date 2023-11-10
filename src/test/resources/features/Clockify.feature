@@ -54,13 +54,15 @@ Feature: Clockify API testing with Lippia Low-Code (TP7)
     And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}
     And body EditProject.json
     When execute method PUT
-    Then the status code should be 200
+    And the status code should be 200
+    Then response should be $.note = value updated from Lippia
 
   @UpdateMemberships
   Scenario: Update project value: memberships
-    Given call Clockify.feature@GetProject
+    Given call Clockify.feature@GetProjects
     And base url env.base_url_clockify
     And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}/memberships
     And body EditMemberships.json
     When execute method PATCH
+    And response should be $.memberships[0].membershipStatus = ACTIVE
     Then the status code should be 200
