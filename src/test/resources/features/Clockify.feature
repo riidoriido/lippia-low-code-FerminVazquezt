@@ -1,5 +1,6 @@
 @Clockify
-Feature: Clockify API testing with Lippia Low-Code (TP7)
+@SuccessCases
+Feature: Clockify API - Testing "Time Tracker" features. (tp final)
 
   Background: Testing required endpoints
     Given base url env.base_url_clockify
@@ -7,33 +8,25 @@ Feature: Clockify API testing with Lippia Low-Code (TP7)
     And header Accept = */*
     And header x-api-key = OGI1NzZiMzAtOWU2Ni00MzFjLWI0MmItYjMzYzQyN2ZiZWFl
 
-  @ListWorkspaces
+
+  @GetWorkspaces
   Scenario: Get all workspaces
     Given endpoint api/v1/workspaces
     When execute method GET
     Then the status code should be 200
-    * define workspaceId = $.[3].id
+    * define workspaceId = $.[6].id
 
-  @CreateWorkspace
-  Scenario: Create workspace
-    Given endpoint api/v1/workspaces
-    When body AddWorkspace.json
-    When execute method POST
-    Then the status code should be 201
-
-  @CreateProject
-  Scenario: Create project in specific Workspace
-    Given call Clockify.feature@ListWorkspaces
-    And base url env.base_url_clockify
-    And endpoint api/v1/workspaces/{{workspaceId}}/projects
-    And body NewProject.json
-    When execute method POST
-    Then the status code should be 201
+  @GetUsers
+  Scenario: Get users from workspace
+    Given call Clockify.feature@GetWorkspaces
+    And endpoint api/v1/workspaces/{{workspaceId}}/users
+    When execute method GET
+    Then the status code should be 200
+    * define userId = $.[0].id
 
   @GetProjects
   Scenario: Get projects inside workspace
     Given call Clockify.feature@ListWorkspaces
-    And base url env.base_url_clockify
     And endpoint api/v1/workspaces/{{workspaceId}}/projects
     When execute method GET
     Then the status code should be 200
@@ -42,27 +35,41 @@ Feature: Clockify API testing with Lippia Low-Code (TP7)
   @FindProjectByID
   Scenario: Get specific project by its ID
     Given call Clockify.feature@GetProjects
-    And base url env.base_url_clockify
     And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}
     When execute method GET
-    Then the status code should be 200
+    And the status code should be 200
+    Then response should be $.name = tpFinalLippia
 
-  @UpdateProject
-  Scenario: Update project details
-    Given call Clockify.feature@GetProject
-    And base url env.base_url_clockify
-    And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}
-    And body EditProject.json
+  @GetTimeEntries
+  Scenario: Get user specific time entries in workspace
+    Given call Clockify.feature@GetUsers
+    And endpoint api/v1/workspaces/{{workspaceId}}/user/{{userId}}/time-entries
+    When execute method GET
+    Then the status code should be 200
+    * define timeEntryId = $.[0].id
+
+  @AddTimeEntry
+  Scenario: Add a time entry to a workspace
+    Given call Clockify.feature@GetWorkspaces
+    And endpoint api/v1/workspaces/{{workspaceId}}/time-entries
+    And body NewTimeEntry.json
+    When execute method POST
+    And the status code should be 201
+    Then response should be $.description = TimeEntry created from Lippia
+
+  @EditTimeEntry
+  Scenario: Edit values from an existent time entry
+    Given call Clockify.feature@GetTimeEntries
+    And endpoint api/v1/workspaces/{{workspaceId}}/time-entries/{{timeEntryId}}
+    And body EditTimeEntry.json
     When execute method PUT
     And the status code should be 200
-    Then response should be $.note = value updated from Lippia
+    Then response should be $.timeInterval.duration = PT9H
 
-  @UpdateMemberships
-  Scenario: Update project value: memberships
-    Given call Clockify.feature@GetProjects
-    And base url env.base_url_clockify
-    And endpoint api/v1/workspaces/{{workspaceId}}/projects/{{projectId}}/memberships
-    And body EditMemberships.json
-    When execute method PATCH
-    And response should be $.memberships[0].membershipStatus = ACTIVE
-    Then the status code should be 200
+
+  @DeleteTimeEntry
+  Scenario: Delete a time entry from a workspace
+    Given call Clockify.feature@GetTimeEntries
+    And endpoint api/v1/workspaces/{{workspaceId}}/time-entries/{{timeEntryId}}
+    When execute method DELETE
+    Then the status code should be 204
