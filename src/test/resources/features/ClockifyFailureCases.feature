@@ -1,5 +1,5 @@
 @Clockify
-@Failures
+@FailureCases
 
 Feature: Clockify API - Testing "Time Tracker" errors. (tp final)
 
